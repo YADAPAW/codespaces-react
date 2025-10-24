@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
+  const userRole = "technical"; // Replace with actual role check logic, e.g., from auth context
+
   return (
     <nav className="app-sidebar">
       <ul>
@@ -15,9 +17,15 @@ function Sidebar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/status" className={({ isActive }) => isActive ? "active" : ""}>
-            <span>⏳</span> ติดตามสถานะ
-          </NavLink>
+          {userRole === "technical" ? (
+            <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
+              <span>📋</span> Report
+            </NavLink>
+          ) : (
+            <NavLink to="/status" className={({ isActive }) => isActive ? "active" : ""}>
+              <span>⏳</span> ติดตามสถานะ
+            </NavLink>
+          )}
         </li>
       </ul>
     </nav>
