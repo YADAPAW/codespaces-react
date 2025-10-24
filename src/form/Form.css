@@ -1,0 +1,107 @@
+
+.form-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* จัดให้อยู่ด้านบนหากหน้าจอยาว */
+  padding: 40px 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.repair-form {
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 700px; /* ปรับขนาดความกว้างของฟอร์มได้ที่นี่ */
+}
+
+.repair-form h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: #343A40;
+  font-weight: 600;
+}
+
+/* จัดการกลุ่มของ Label และ Input */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* สไตล์สำหรับ input, select, textarea ทั้งหมด */
+.repair-form input[type="text"],
+.repair-form input[type="email"],
+.repair-form select,
+.repair-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #CED4DA;
+  border-radius: 6px;
+  background-color: #F8F9FA;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.repair-form input[type="text"]:focus,
+.repair-form input[type="email"]:focus,
+.repair-form select:focus,
+.repair-form textarea:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* จัดการแถวที่มี 2 คอลัมน์ */
+.form-row {
+  display: flex;
+  gap: 20px; /* ระยะห่างระหว่าง 2 ช่อง */
+  flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่ในจอเล็ก */
+}
+
+.form-row .form-group {
+  flex: 1; /* ทำให้แต่ละช่องขยายเท่ากัน */
+  min-width: 200px; /* ความกว้างขั้นต่ำสำหรับจอเล็ก */
+}
+
+/* พื้นที่สำหรับอัปโหลดรูปภาพ */
+.image-upload-area {
+  width: 100%;
+  height: 200px; /* ปรับความสูงได้ตามต้องการ */
+  background-color: #F8F9FA;
+  border: 1px solid #CED4DA;
+  border-radius: 6px;
+}
+
+/* ส่วนของปุ่ม Submit */
+.form-actions {
+  text-align: right; /* จัดปุ่มไปทางขวา */
+  margin-top: 25px;
+}
+
+.form-actions button {
+  padding: 10px 24px;
+  background-color: #FFFFFF;
+  color: #495057;
+  border: 1px solid #CED4DA;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.form-actions button:hover {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+}
