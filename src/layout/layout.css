@@ -1,0 +1,103 @@
+/* --- โครงสร้างแอปโดยรวม --- */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #E9ECEF; /* สีพื้นหลังเทาอ่อนๆ */
+}
+
+/* --- Header (ส่วนหัว) --- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 24px;
+  border-bottom: 1px solid #dee2e6;
+  height: 60px; /* ล็อคความสูง Header */
+  box-sizing: border-box;
+  flex-shrink: 0; /* ไม่ให้หด */
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: #343A40;
+}
+
+.header-icon {
+  font-size: 1.5rem;
+  color: #495057;
+  cursor: pointer;
+}
+
+.header-actions {
+  display: flex;
+  gap: 24px;
+}
+
+/* --- โครงสร้างส่วนเนื้อหา (Sidebar + Content) --- */
+.main-layout {
+  display: flex;
+  flex-grow: 1; /* ให้ยืดเต็มความสูงที่เหลือ */
+  overflow: hidden; /* กัน Scrollbar ซ้อน */
+}
+
+/* --- Sidebar (แถบข้าง) --- */
+.app-sidebar {
+  width: 200px; /* ความกว้าง Sidebar */
+  background-color: #ffffff;
+  padding-top: 16px;
+  border-right: 1px solid #dee2e6;
+  flex-shrink: 0; /* ไม่ให้หด */
+}
+
+.app-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.app-sidebar li {
+  margin: 0;
+}
+
+/* สไตล์ของลิงก์ (NavLink) */
+.app-sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px;
+  text-decoration: none;
+  color: #343a40;
+  font-size: 1rem;
+  font-weight: 500;
+  gap: 16px;
+  border-right: 4px solid transparent; /* เส้นขอบขวาสำหรับ active */
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.app-sidebar a:hover {
+  background-color: #f8f9fa;
+}
+
+/* สไตล์เมื่อลิงก์ 'active' (หน้าปัจจุบัน) */
+.app-sidebar a.active {
+  background-color: #e7f5ff;
+  color: #007bff;
+  border-right-color: #007bff;
+  font-weight: 600;
+}
+
+/* --- Content Area (พื้นที่เนื้อหา) --- */
+.content-area {
+  flex-grow: 1; /* ยืดเต็มพื้นที่ที่เหลือ */
+  overflow-y: auto; /* ให้เนื้อหาข้างใน scroll ได้ */
+  /* padding: 20px; (Form.css มี padding ของตัวเองแล้ว) */
+}
