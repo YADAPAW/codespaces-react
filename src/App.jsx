@@ -7,7 +7,8 @@ import Form from "./form/Form";
 import Status from "./status/Status.jsx";
 import Login from "./login/Login.jsx";
 import Report from "./report/Report.jsx";
-import Equipment from "./equipment/Equipment.jsx"; // ✅ เพิ่มหน้า Equipment
+import Equipment from "./equipment/Equipment.jsx";
+import AddEq from "./equipment/AddEq.jsx"; // ✅ เพิ่มหน้า AddEq (เพิ่มอุปกรณ์ใหม่)
 
 // 3. Import Layout
 import Header from "./layout/Header.jsx";
@@ -43,7 +44,8 @@ function App() {
         <Route path="/form" element={<Form />} />
         <Route path="/status" element={<Status />} />
         <Route path="/report" element={<Report />} />
-        <Route path="/equipment" element={<Equipment />} /> {/* ✅ เพิ่มหน้าอุปกรณ์ */}
+        <Route path="/equipment" element={<Equipment />} />
+        <Route path="/addeq" element={<AddEq />} /> {/* ✅ เพิ่ม route สำหรับเพิ่มอุปกรณ์ */}
       </Route>
     </Routes>
   );
