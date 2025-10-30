@@ -1,34 +1,35 @@
-// 1. Import "Outlet" เพิ่ม
-import { Routes, Route, Outlet } from 'react-router-dom';
+// 1. Import React Router
+import { Routes, Route, Outlet } from "react-router-dom";
 
-// Import หน้าต่างๆ
+// 2. Import หน้าต่าง ๆ
 import Dashboard from "./dashboard/Dashboard";
 import Form from "./form/Form";
 import Status from "./status/Status.jsx";
 import Login from "./login/Login.jsx";
-import Report from "./report/Report.jsx"; // ✅ เพิ่มบรรทัดนี้
+import Report from "./report/Report.jsx";
+import Equipment from "./equipment/Equipment.jsx"; // ✅ เพิ่มหน้า Equipment
 
-// Import Layout
-import Header from "./layout/header.jsx";
+// 3. Import Layout
+import Header from "./layout/Header.jsx";
 import Sidebar from "./layout/Sidebar.jsx";
-import './layout/layout.css';
+import "./layout/layout.css";
 
-// 3. สร้าง Layout Component สำหรับหน้าที่มี Header/Sidebar
+// 4. Layout หลัก (ที่มี Header + Sidebar)
 const MainLayout = () => {
   return (
-    <div className="app-container" style={{ height: '100vh' }}>
+    <div className="app-container" style={{ height: "100vh" }}>
       <Header />
       <div className="main-layout">
         <Sidebar />
         <main className="content-area">
-          <Outlet /> 
+          <Outlet /> {/* แสดงเนื้อหาของแต่ละหน้า */}
         </main>
       </div>
     </div>
   );
-}
+};
 
-// 4. App Component หลัก
+// 5. Component หลัก
 function App() {
   return (
     <Routes>
@@ -41,7 +42,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/form" element={<Form />} />
         <Route path="/status" element={<Status />} />
-        <Route path="/report" element={<Report />} /> {/* ✅ เพิ่มหน้า Report */}
+        <Route path="/report" element={<Report />} />
+        <Route path="/equipment" element={<Equipment />} /> {/* ✅ เพิ่มหน้าอุปกรณ์ */}
       </Route>
     </Routes>
   );
