@@ -15,7 +15,7 @@ const Status = () => {
 
   return (
     <div className="status-container">
-      <h2>ภาพรวมรายการแจ้งซ่อมทั้งหมดของบริษัท</h2>
+      <h2>ติดตามสถานะการแจ้งซ่อมของฉัน</h2>
 
       {/* การ์ดสรุป */}
       <div className="summary-cards">
@@ -42,7 +42,7 @@ const Status = () => {
       {/* ตารางข้อมูล */}
       <div className="table-section">
         <div className="table-header-bar">
-          <h3>รายการงานซ่อมที่ค้างอยู่ (เฉพาะที่กำลังดำเนินการ)</h3>
+          <h3>รายการงานซ่อมที่ค้างอยู่</h3>
         </div>
         <div className="table-wrapper">
           <table className="repair-table">
