@@ -1,41 +1,49 @@
-/*
-  ไฟล์ Form.css ที่อัปเดตสำหรับ Layout ใหม่
-  - ลบ min-height: 100vh ออก
-  - เปลี่ยน padding และ background-color ของ .form-page-container 
-    ให้เข้ากับ .content-area
-*/
-
-.form-page-container {
-  display: flex;
-  justify-content: center; /* จัดฟอร์มไว้ตรงกลางแนวนอน */
-  align-items: flex-start; /* จัดฟอร์มไว้ด้านบน */
-  padding: 24px 40px; /* ปรับ padding ให้เหมือน Dashboard */
-  background-color: #F8F9FA; /* เพิ่มสีพื้นหลังให้เหมือน Dashboard */
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100%; /* ให้ยืดเต็ม .content-area */
+/* ปิดการเลื่อนหน้า */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: "Prompt", sans-serif;
 }
 
-/* --- นี่คือตัวกล่องฟอร์มสีขาว --- */
+/* พื้นหลังของหน้า */
+.form-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 40px;
+  background-color: #f8f9fa;
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* กล่องฟอร์มหลัก */
 .repair-form {
   background-color: #ffffff;
-  padding: 30px 40px;
-  border-radius: 8px;
+  padding: 40px 50px;
+  border-radius: 10px;
   width: 100%;
-  max-width: 700px; /* ความกว้างสูงสุดของฟอร์ม */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* เพิ่มเงาให้สวยงาม */
+  max-width: 800px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .repair-form h2 {
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 30px;
-  color: #343A40;
+  margin: 0;
+  text-align: left;
+  color: #0d47a1;
+  font-size: 1.6rem;
   font-weight: 600;
 }
 
-/* --- ส่วนที่เหลือของสไตล์ฟอร์ม (เหมือนเดิม) --- */
+.form-subtitle {
+  margin: 8px 0 28px;
+  color: #555;
+  font-size: 0.95rem;
+}
 
+/* ช่องกรอกข้อมูล */
 .form-group {
   margin-bottom: 20px;
 }
@@ -43,34 +51,33 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #495057;
+  color: #333;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
 }
 
-.repair-form input[type="text"],
-.repair-form input[type="email"],
+.repair-form input,
 .repair-form select,
 .repair-form textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #CED4DA;
+  border: 1px solid #ced4da;
   border-radius: 6px;
-  background-color: #F8F9FA;
-  font-size: 16px;
-  box-sizing: border-box;
+  background-color: #f8f9fa;
+  font-size: 15px;
   transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
-.repair-form input[type="text"]:focus,
-.repair-form input[type="email"]:focus,
+.repair-form input:focus,
 .repair-form select:focus,
 .repair-form textarea:focus {
   outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #2196f3;
+  box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
 }
 
+/* จัด 2 คอลัมน์ */
 .form-row {
   display: flex;
   gap: 20px;
@@ -82,23 +89,36 @@
   min-width: 200px;
 }
 
-.image-upload-area {
-  width: 100%;
-  height: 200px;
-  background-color: #F8F9FA;
-  border: 1px solid #CED4DA;
-  border-radius: 6px;
-}
-
+/* ปุ่ม */
 .form-actions {
-  text-align: right;
-  margin-top: 25px;
+  display: flex;
+  justify-content: space-between; /* ปุ่มซ้าย-ขวา */
+  align-items: center;
+  margin-top: 30px;
 }
 
-.form-actions button {
+.btn-back {
+  align-self: flex-start; /* ให้อยู่ชิดซ้าย */
+  background-color: #cccccc;
+  color: #333;
+  border: none;
   padding: 10px 24px;
-  background-color: #007bff; /* เปลี่ยนสีปุ่มเป็นสีหลัก */
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-back:hover {
+  background-color: #b5b5b5;
+}
+
+.btn-submit {
+  align-self: flex-end; /* ให้อยู่ชิดขวา */
+  background-color: #007bff;
   color: #ffffff;
+  padding: 10px 24px;
   border: none;
   border-radius: 6px;
   font-size: 16px;
@@ -107,6 +127,6 @@
   transition: background-color 0.2s;
 }
 
-.form-actions button:hover {
+.btn-submit:hover {
   background-color: #0056b3;
 }
