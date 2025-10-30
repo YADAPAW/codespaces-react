@@ -1,45 +1,46 @@
 import React from "react";
-import "./Dashboard.css"; // ยังคง import CSS ของตัวเองไว้
+import "./Dashboard.css";
 
 const Dashboard = () => {
-  // ข้อมูลตัวอย่างสำหรับตาราง
   const data = [
-    { id: "003", date: "02/09/2025", name: "ญาดา ปวีณชัย", detail: "หลอดไฟเสีย", status: "ระหว่างดำเนินการ" },
-    // เพิ่มข้อมูลตัวอย่างได้ที่นี่
-    // { id: "002", date: "01/09/2025", name: "สมชาย ใจดี", detail: "แอร์ไม่เย็น", status: "เสร็จสิ้น" },
-    // { id: "001", date: "30/08/2025", name: "อารีรัตน์ มีสุข", detail: "ประตูฝืด", status: "เสร็จสิ้น" },
+    { id: "001", date: "02/09/2025", name: "ญาดา ปวีณชัย", detail: "หลอดไฟเสีย", status: "ระหว่างดำเนินการ" },
+    { id: "002", date: "10/09/2025", name: "พิมพ์ชนก กมล", detail: "เครื่องปรับอากาศในที่ทำงาน", status: "เสร็จสิ้น" },
   ];
 
-  // กรองข้อมูลเฉพาะที่ยังไม่เสร็จ
-  const pendingItems = data.filter(item => item.status === "ระหว่างดำเนินการ");
-  const completedItems = data.filter(item => item.status === "เสร็จสิ้น");
+  const waitingItems = data.filter((item) => item.status === "รอดำเนินการ");
+  const pendingItems = data.filter((item) => item.status === "ระหว่างดำเนินการ");
+  const completedItems = data.filter((item) => item.status === "เสร็จสิ้น");
 
   return (
-    // ลบ <div className="dashboard-container"> และ <aside className="sidebar"> ออก
-    // เหลือแค่ <main> แต่เปลี่ยนเป็น <div> เพื่อไม่ให้มี <main> ซ้อน <main>
-    <div className="main-content"> 
-      <h2>ภาพรวมรายการแจ้งซ่อมทั้งหมดของบริษัท</h2>
+    <div className="dashboard">
+      <div className="header">
+        <h2>ภาพรวมรายการแจ้งซ่อมทั้งหมดของบริษัท</h2>
+        <button className="btn-new">+ แจ้งซ่อมใหม่</button>
+      </div>
 
-      {/* การ์ดสรุป */}
       <div className="cards">
         <div className="card orange">
-          <p>ระหว่างดำเนินการ</p>
-          {/* ทำให้ข้อมูลเป็น Dynamic */}
-          <h3>{pendingItems.length} รายการ</h3> 
+          <p>รอดำเนินการ</p>
+          <h3>{waitingItems.length} รายการ</h3>
         </div>
         <div className="card green">
+          <p>ระหว่างดำเนินการ</p>
+          <h3>{pendingItems.length} รายการ</h3>
+        </div>
+        <div className="card purple">
           <p>รายการที่เสร็จสิ้น</p>
           <h3>{completedItems.length} รายการ</h3>
         </div>
-        <div className="card purple">
-          <p>รวมรายการทั้งหมด</p>
-          <h3>{data.length} รายการ</h3>
-        </div>
       </div>
 
-      {/* ตารางข้อมูล */}
-      <section className="table-section">
-        <h3>รายการงานซ่อมที่ค้างอยู่ (เฉพาะที่กำลังดำเนินการ)</h3>
+      <div className="table-container">
+        <div className="table-header">
+          <h3>รายการซ่อมทั้งหมด</h3>
+          <div className="search-box">
+            <input type="text" placeholder="ค้นหา" />
+          </div>
+        </div>
+
         <table>
           <thead>
             <tr>
@@ -48,36 +49,30 @@ const Dashboard = () => {
               <th>ชื่อผู้แจ้ง</th>
               <th>รายละเอียดการแจ้งซ่อม</th>
               <th>สถานะ</th>
-              <th>จัดการ</th>
             </tr>
           </thead>
           <tbody>
-            {/* แสดงผลเฉพาะรายการที่กำลังดำเนินการ */}
-            {pendingItems.map((item) => (
+            {data.map((item) => (
               <tr key={item.id}>
                 <td>{item.id}</td>
                 <td>{item.date}</td>
                 <td>{item.name}</td>
                 <td>{item.detail}</td>
-                <td>
-                  {/* ใส่สีให้สถานะ */}
-                  <span className="status-badge status-pending">{item.status}</span>
-                </td>
-                <td>
-                  <button className="btn-detail">รายละเอียด</button>
-                  <button className="btn-print">พิมพ์</button>
-                </td>
+                <td>{item.status}</td>
               </tr>
             ))}
-            {/* แสดงข้อความถ้าไม่มีข้อมูล */}
-            {pendingItems.length === 0 && (
-              <tr>
-                <td colSpan="6" style={{ textAlign: 'center' }}>ไม่มีรายการที่ค้างอยู่</td>
-              </tr>
-            )}
           </tbody>
         </table>
-      </section>
+
+        <div className="pagination">
+          <span>Prev</span>
+          <div className="dots">
+            <span className="dot active"></span>
+            <span className="dot"></span>
+          </div>
+          <span>Next</span>
+        </div>
+      </div>
     </div>
   );
 };
