@@ -1,14 +1,11 @@
 import React from "react";
 import "./Form.css";
 
-const Form = () => {
-  const handleBack = () => {
-    window.history.back(); // กลับไปหน้าก่อนหน้า
-  };
-
+const Form = ({ onBack }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("ส่งแบบฟอร์มเรียบร้อยแล้ว!");
+    onBack?.(); // กลับไป Dashboard หลังส่ง
   };
 
   return (
@@ -19,7 +16,6 @@ const Form = () => {
           กรอกรายละเอียดปัญหาที่ต้องการแจ้งซ่อม
         </p>
 
-        {/* หัวข้อปัญหา */}
         <div className="form-group">
           <label>หัวข้อปัญหา *</label>
           <input
@@ -29,13 +25,11 @@ const Form = () => {
           />
         </div>
 
-        {/* ทรัพย์สินที่เกี่ยวข้อง */}
         <div className="form-group">
           <label>ทรัพย์สินที่เกี่ยวข้อง</label>
           <input type="text" placeholder="เลือกทรัพย์สิน (ถ้ามี)" />
         </div>
 
-        {/* หมวดหมู่ + ระดับความสำคัญ */}
         <div className="form-row">
           <div className="form-group">
             <label>หมวดหมู่ *</label>
@@ -57,7 +51,6 @@ const Form = () => {
           </div>
         </div>
 
-        {/* รายละเอียดปัญหา */}
         <div className="form-group">
           <label>รายละเอียดปัญหา *</label>
           <textarea
@@ -67,7 +60,6 @@ const Form = () => {
           ></textarea>
         </div>
 
-        {/* ข้อมูลผู้แจ้ง */}
         <div className="form-row">
           <div className="form-group">
             <label>ชื่อผู้แจ้ง *</label>
@@ -79,7 +71,6 @@ const Form = () => {
           </div>
         </div>
 
-        {/* ช่องทางติดต่อ + สถานที่ */}
         <div className="form-row">
           <div className="form-group">
             <label>ช่องทางติดต่อ *</label>
@@ -95,9 +86,8 @@ const Form = () => {
           </div>
         </div>
 
-        {/* ปุ่มย้อนกลับและส่ง */}
         <div className="form-actions">
-          <button type="button" className="btn-back" onClick={handleBack}>
+          <button type="button" className="btn-back" onClick={onBack}>
             ย้อนกลับ
           </button>
           <button type="submit" className="btn-submit">

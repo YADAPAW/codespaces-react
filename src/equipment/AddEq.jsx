@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./AddEq.css";
 
-const AddEq = () => {
+const AddEq = ({ onCancel, onSave }) => {  // รับ props สำหรับ cancel และ save
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -20,8 +20,18 @@ const AddEq = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("ข้อมูลอุปกรณ์ที่เพิ่ม:", formData);
-    alert("บันทึกข้อมูลอุปกรณ์เรียบร้อยแล้ว!");
+    // แปลง formData ให้ตรงกับโครงสร้าง equipmentList (id สร้างอัตโนมัติหรือจาก code)
+    const newEquipment = {
+      id: formData.code,  // ใช้รหัสเป็น id
+      name: formData.name,
+      category: formData.category,
+      location: formData.location,
+      status: formData.status,
+      // สามารถเพิ่ม field อื่นๆ ถ้าต้องการแสดงในตาราง
+    };
+    if (onSave) {
+      onSave(newEquipment);  // ส่งข้อมูลกลับไป parent
+    }
   };
 
   const handleCancel = () => {
@@ -35,6 +45,9 @@ const AddEq = () => {
       warrantyDate: "",
       status: "ใช้งาน",
     });
+    if (onCancel) {
+      onCancel();  // เรียก callback เพื่อกลับไปหน้ารายการ
+    }
   };
 
   return (

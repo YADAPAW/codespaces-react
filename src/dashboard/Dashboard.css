@@ -1,3 +1,6 @@
+/* -------------------------------------------------
+   Dashboard – ไฟล์ CSS ทั้งหมด
+   ------------------------------------------------- */
 .dashboard {
   padding: 30px;
   background-color: #f4f5f7;
@@ -5,7 +8,7 @@
   font-family: "Prompt", sans-serif;
 }
 
-/* ส่วนหัว */
+/* ---------- ส่วนหัว ---------- */
 .header {
   display: flex;
   justify-content: space-between;
@@ -32,7 +35,7 @@
   background-color: #007bbf;
 }
 
-/* การ์ดสรุป */
+/* ---------- การ์ดสรุป ---------- */
 .cards {
   display: flex;
   gap: 20px;
@@ -55,17 +58,17 @@
 }
 
 .card h3 {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 700;
   margin: 0;
 }
 
 /* สีการ์ด */
-.card.orange { border-top: 6px solid orange; }
-.card.green { border-top: 6px solid #32b57b; }
-.card.purple { border-top: 6px solid #7b5cc4; }
+.card.orange   { border-top: 6px solid orange; }
+.card.green    { border-top: 6px solid #32b57b; }
+.card.purple   { border-top: 6px solid #7b5cc4; }
 
-/* ตาราง */
+/* ---------- ตาราง ---------- */
 .table-container {
   background-color: white;
   border-radius: 10px;
@@ -91,6 +94,7 @@
   padding: 6px 10px;
   border-radius: 4px;
   border: none;
+  width: 200px;
 }
 
 /* ตารางข้อมูล */
@@ -99,7 +103,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 14px 20px;
   border-bottom: 1px solid #eee;
   text-align: left;
@@ -112,7 +117,137 @@ th {
   color: #555;
 }
 
-/* การแบ่งหน้า */
+tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ---------- ปุ่มจัดการ (เฉพาะช่าง) ---------- */
+.btn-action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+/* เริ่มซ่อม */
+.btn-start-repair {
+  background-color: #f39c12;
+  color: white;
+}
+.btn-start-repair:hover {
+  background-color: #e67e22;
+}
+
+/* ซ่อมเสร็จ */
+.btn-complete-repair {
+  background-color: #27ae60;
+  color: white;
+}
+.btn-complete-repair:hover {
+  background-color: #219653;
+}
+
+.status-completed {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* ---------- ปุ่ม “รายละเอียด” (สีฟ้า) ---------- */
+.btn-detail {
+  background-color: #009fe3;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 80px;
+}
+.btn-detail:hover {
+  background-color: #007bbf;
+}
+
+/* ---------- สถานะ (สีพื้นหลังตามสถานะ) ---------- */
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ใช้ class ที่สร้างจากสถานะโดยแทนช่องว่างด้วยขีดกลาง */
+.status-รอดำเนินการ {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-ระหว่างดำเนินการ {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+.status-เสร็จสิ้น {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* ---------- จัดตำแหน่งคอลัมน์ “จัดการ” ---------- */
+.action-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ---------- Modal แสดงรายละเอียด ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.modal-content p {
+  margin: 15px 0;
+  color: #555;
+  line-height: 1.6;
+}
+
+.btn-close-modal {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  float: right;
+}
+.btn-close-modal:hover {
+  background-color: #5a6268;
+}
+
+/* ---------- การแบ่งหน้า ---------- */
 .pagination {
   display: flex;
   justify-content: flex-end;
@@ -134,7 +269,53 @@ th {
   border-radius: 50%;
   background-color: #ccc;
 }
-
 .dot.active {
   background-color: #00a6e6;
+}
+
+/* ---------- แก้ไข: จัดตำแหน่งปุ่มและข้อความในคอลัมน์ "จัดการ" ให้กึ่งกลางทั้งแนวนอนและแนวตั้ง ---------- */
+.action-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 20px; /* ทำให้สูงพอให้กึ่งกลางแนวตั้ง */
+}
+
+.action-cell button,
+.action-cell span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+/* ทำให้ปุ่มและข้อความสูงเท่ากัน และกึ่งกลางแนวตั้ง */
+.action-cell .btn-action,
+.action-cell .status-completed {
+  min-height: 36px; /* ความสูงคงที่ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cards {
+    flex-direction: column;
+  }
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .search-box input {
+    width: 100%;
+  }
 }

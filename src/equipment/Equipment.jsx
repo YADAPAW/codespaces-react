@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Equipment.css";
+import AddEq from "./AddEq";  // เพิ่ม import component AddEq
 
 const Equipment = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);  // State ใหม่สำหรับควบคุมการแสดงฟอร์มเพิ่มอุปกรณ์
 
   // 🔹 ข้อมูลจำลอง
   const equipmentList = [
@@ -19,6 +21,21 @@ const Equipment = () => {
   const filteredList = equipmentList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // ถ้ากำลังแสดงฟอร์มเพิ่ม ให้ render AddEq แทนตาราง
+  if (showAddForm) {
+    return (
+      <AddEq
+        onCancel={() => setShowAddForm(false)}  // ส่ง prop เพื่อกลับไปหน้ารายการ
+        onSave={(newEquipment) => {
+          // TODO: เพิ่ม logic จริงสำหรับบันทึกข้อมูล (เช่น เรียก API หรือ update state)
+          console.log("อุปกรณ์ใหม่:", newEquipment);
+          setShowAddForm(false);  // กลับไปหน้ารายการหลังบันทึก
+          alert("บันทึกข้อมูลอุปกรณ์เรียบร้อยแล้ว!");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="equipment-page">
@@ -37,7 +54,10 @@ const Equipment = () => {
           <button className="search-btn">🔍</button>
         </div>
 
-        <button className="add-btn">+ เพิ่มอุปกรณ์</button>
+        {/* แก้ไขปุ่มให้ setState เพื่อแสดงฟอร์ม */}
+        <button className="add-btn" onClick={() => setShowAddForm(true)}>
+          + เพิ่มอุปกรณ์
+        </button>
       </div>
 
       <div className="equipment-table-container">
