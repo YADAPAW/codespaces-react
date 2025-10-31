@@ -151,3 +151,8 @@ body, html {
 .dot.active {
   background-color: #42b0f5;
 }
+
+/* เพิ่มสีสถานะ (สีเดิมมีแค่ .yellow) */
+.status-dot.green  { background-color: #28a745; }
+.status-dot.yellow { background-color: #ffcc00; }
+.status-dot.red    { background-color: #dc3545; }

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { supabase } from "../lib/supabaseClient";
 import "./AddEq.css";
 
-const AddEq = () => {
+const AddEq = ({ onCancel, onSave }) => {
   const [formData, setFormData] = useState({
     name: "",
-    code: "",
+    code: "",           // ใช้เป็น idd
     category: "",
     location: "",
     plan: "",
@@ -13,15 +14,65 @@ const AddEq = () => {
     status: "ใช้งาน",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("ข้อมูลอุปกรณ์ที่เพิ่ม:", formData);
-    alert("บันทึกข้อมูลอุปกรณ์เรียบร้อยแล้ว!");
+    setLoading(true);
+    setError(null);
+
+    try {
+      // สร้าง object ที่จะ insert เฉพาะ field ที่มีในตาราง equipment
+      const equipmentData = {
+        idd: formData.code,     // code → idd
+        name: formData.name,
+        type: formData.category, // category → type
+        place: formData.location, // location → place
+        status: formData.status,
+      };
+
+      const { error: insertError } = await supabase
+        .from("equipment")
+        .insert([equipmentData]);
+
+      if (insertError) throw insertError;
+
+      // เรียก onSave เพื่อส่งข้อมูลกลับ parent (ถ้ามี)
+      if (onSave) {
+        onSave({
+          id: formData.code,
+          ...equipmentData,
+        });
+      }
+
+      alert("เพิ่มอุปกรณ์สำเร็จ!");
+
+      // รีเซ็ตฟอร์ม
+      setFormData({
+        name: "",
+        code: "",
+        category: "",
+        location: "",
+        plan: "",
+        purchaseDate: "",
+        warrantyDate: "",
+        status: "ใช้งาน",
+      });
+
+      if (onCancel) onCancel();
+
+    } catch (err) {
+      setError(err.message || "เกิดข้อผิดพลาดในการเพิ่มข้อมูล");
+      console.error("Supabase insert error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -35,6 +86,7 @@ const AddEq = () => {
       warrantyDate: "",
       status: "ใช้งาน",
     });
+    if (onCancel) onCancel();
   };
 
   return (
@@ -42,6 +94,8 @@ const AddEq = () => {
       <div className="addeq-header">
         <h2>เพิ่มอุปกรณ์ใหม่</h2>
       </div>
+
+      {error && <div className="error-message" style={{ color: "red", marginBottom: "1rem" }}>{error}</div>}
 
       <form className="addeq-form" onSubmit={handleSubmit}>
         <div className="form-row">
@@ -150,8 +204,8 @@ const AddEq = () => {
           <button type="button" className="cancel-btn" onClick={handleCancel}>
             ยกเลิก
           </button>
-          <button type="submit" className="save-btn">
-            เพิ่ม
+          <button type="submit" className="save-btn" disabled={loading}>
+            {loading ? "กำลังเพิ่ม..." : "เพิ่ม"}
           </button>
         </div>
       </form>

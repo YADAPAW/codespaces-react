@@ -1,17 +1,55 @@
-import React from 'react';
-import './Status.css';
+// src/pages/Status.jsx
+import React, { useState, useEffect } from "react";
+import "./Status.css";
+import { supabase } from "../lib/supabaseClient";
+
+const TABLE_NAME = "repairs";
 
 const Status = () => {
-  // ข้อมูลตัวอย่างสำหรับตาราง
-  const data = [
-    { id: "003", date: "02/09/2025", name: "ญาดา ปวีณชัย", detail: "หลอดไฟเสีย", status: "ระหว่างดำเนินการ" },
-    { id: "002", date: "01/09/2025", name: "สมชาย ใจดี", detail: "แอร์ไม่เย็น", status: "เสร็จสิ้น" },
-    { id: "001", date: "30/08/2025", name: "อารีรัตน์ มีสุข", detail: "ประตูฝืด", status: "เสร็จสิ้น" },
-  ];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // กรองข้อมูลตามสถานะ
+  useEffect(() => {
+    fetchRepairs();
+  }, []);
+
+  const fetchRepairs = async () => {
+    try {
+      setLoading(true);
+      const { data: repairs, error } = await supabase
+        .from(TABLE_NAME)
+        .select("*")
+        .order("day", { ascending: false });
+
+      if (error) throw error;
+
+      // เพิ่มเลขที่เป็น 001, 002, ...
+      const formatted = repairs.map((r, index) => ({
+        id: r.id,
+        seqNo: String(index + 1).padStart(3, "0"), // 001, 002, ...
+        date: new Date(r.day).toLocaleDateString("th-TH"),
+        name: r.name,
+        detail: r.topic,
+        status: r.status ?? "รอดำเนินการ",
+      }));
+
+      setData(formatted);
+    } catch (err) {
+      console.error(err);
+      setError("โหลดข้อมูลล้มเหลว: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // กรองข้อมูล
   const pendingItems = data.filter(item => item.status === "ระหว่างดำเนินการ");
   const completedItems = data.filter(item => item.status === "เสร็จสิ้น");
+  const totalItems = data.length;
+
+  if (loading) return <div className="loading">กำลังโหลด...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="status-container">
@@ -34,7 +72,7 @@ const Status = () => {
         <div className="summary-card card-total">
           <div className="card-info">
             <span className="card-title">รายการทั้งหมด</span>
-            <span className="card-count">{data.length} <span className="card-unit">รายการ</span></span>
+            <span className="card-count">{totalItems} <span className="card-unit">รายการ</span></span>
           </div>
         </div>
       </div>
@@ -59,11 +97,15 @@ const Status = () => {
             <tbody>
               {pendingItems.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
+                  <td className="seq-no">{item.seqNo}</td>
                   <td>{item.date}</td>
                   <td>{item.name}</td>
                   <td>{item.detail}</td>
-                  <td><span className="status-badge in-progress">{item.status}</span></td>
+                  <td>
+                    <span className={`status-badge ${item.status === "ระหว่างดำเนินการ" ? "in-progress" : "completed"}`}>
+                      {item.status}
+                    </span>
+                  </td>
                   <td>
                     <button className="btn-action btn-details">รายละเอียด</button>
                     <button className="btn-action btn-print">พิมพ์</button>
@@ -72,7 +114,9 @@ const Status = () => {
               ))}
               {pendingItems.length === 0 && (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'center' }}>ไม่มีรายการที่ค้างอยู่</td>
+                  <td colSpan="6" style={{ textAlign: "center", padding: "30px", color: "#888" }}>
+                    ไม่มีรายการที่ค้างอยู่
+                  </td>
                 </tr>
               )}
             </tbody>
