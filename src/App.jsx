@@ -1,57 +1,54 @@
-// src/App.tsx
-import { useState, useEffect } from 'react'
+// 1. Import React Router
+import { Routes, Route, Outlet } from "react-router-dom";
 
-// !! สำคัญ: import client จาก path ที่ถูกต้อง
-// (จากรูป 'utils' อยู่ข้างนอก 'src' เลยต้องใช้ '../')
-import { supabase } from '../utils/supabase/client' 
+// 2. Import หน้าต่าง ๆ
+import Dashboard from "./dashboard/Dashboard";
+import Form from "./dashboard/Form.jsx";
+import Status from "./status/Status.jsx";
+import Login from "./login/Login.jsx";
+import Report from "./report/Report.jsx";
+import Equipment from "./equipment/Equipment.jsx";
+import AddEq from "./equipment/AddEq.jsx"; // ✅ เพิ่มหน้า AddEq (เพิ่มอุปกรณ์ใหม่)
 
-function App() {
- const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+// 3. Import Layout
+import Header from "./layout/Header.jsx";
+import Sidebar from "./layout/Sidebar.jsx";
+import "./layout/layout.css";
 
-  useEffect(() => {
-    // ฟังก์ชันสำหรับดึงข้อมูล
-    async function fetchData() {
-      console.log('Attempting to fetch data from Supabase...')
-      setLoading(true)
-      
-      // 1. ลองดึงข้อมูลจากตาราง 'test_table'
-      const { data, error } = await supabase
-        .from('test_table') // <-- ชื่อตารางที่คุณสร้าง
-        .select('*')
-
-      if (error) {
-        console.error('Error fetching data:', error.message)
-      } else {
-        // 2. ถ้าสำเร็จ, เก็บข้อมูล
-        console.log('Data fetched successfully:', data)
-        setData(data)
-      }
-      setLoading(false)
-    }
-
-    fetchData()
-  }, []) // ทำงานครั้งเดียวตอนเปิดหน้า
-
-  // 3. แสดงผลลัพธ์
+// 4. Layout หลัก (ที่มี Header + Sidebar)
+const MainLayout = () => {
   return (
-    <div>
-      <h1>Supabase Connection Test (Vite + React)</h1>
-      <hr />
-      {loading && <p>Loading...</p>}
-      
-      {data && (
-        <>
-          <h2>Data fetched:</h2>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-        </>
-      )}
-      
-      {!loading && !data && (
-        <p>No data found or connection failed. (Check console for errors)</p>
-      )}
+    <div className="app-container" style={{ height: "100vh" }}>
+      <Header />
+      <div className="main-layout">
+        <Sidebar />
+        <main className="content-area">
+          <Outlet /> {/* แสดงเนื้อหาของแต่ละหน้า */}
+        </main>
+      </div>
     </div>
-  )
+  );
+};
+
+// 5. Component หลัก
+function App() {
+  return (
+    <Routes>
+      {/* หน้า Login */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Login />} />
+
+      {/* Layout หลัก */}
+      <Route element={<MainLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/form" element={<Form />} />
+        <Route path="/status" element={<Status />} />
+        <Route path="/report" element={<Report />} />
+        <Route path="/equipment" element={<Equipment />} />
+        <Route path="/addeq" element={<AddEq />} /> {/* ✅ เพิ่ม route สำหรับเพิ่มอุปกรณ์ */}
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
