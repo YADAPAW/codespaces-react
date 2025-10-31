@@ -1,6 +1,6 @@
 // src/dashboard/Dashboard.jsx
-import React, { useState, useEffect } from "react";
-import "./Dashboard.css"; // <--- แก้ไขที่บรรทัดนี้
+import React, { useState, useEffect, useMemo } from "react"; // เพิ่ม useMemo
+import "./Dashboard.css";
 import Form from "./Form.jsx";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabaseClient";
@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // <--- 1. เพิ่ม State สำหรับค้นหา
 
   useEffect(() => {
     fetchRepairs();
@@ -40,14 +41,14 @@ const Dashboard = () => {
         call: r.call ?? "-",
         place: r.place ?? "-",
         status: r.status ?? "รอดำเนินการ",
-        level: r.level ?? "ปานกลาง", // เพิ่ม level
+        level: r.level ?? "ปานกลาง",
         detailObj: {
           topic: r.topic,
           type: r.type ?? "-",
           info: r.info ?? "-",
           place: r.place ?? "-",
           call: r.call ?? "-",
-          level: r.level ?? "ปานกลาง", // เพิ่มใน modal
+          level: r.level ?? "ปานกลาง",
         },
       }));
 
@@ -108,6 +109,20 @@ const Dashboard = () => {
   const pending = data.filter(i => i.status === "ระหว่างดำเนินการ");
   const completed = data.filter(i => i.status === "เสร็จสิ้น");
 
+  // <--- 3. กรองข้อมูลด้วย useMemo
+  const filteredData = useMemo(() => {
+    if (!searchTerm) {
+      return data; // ถ้าช่องค้นหาว่าง, แสดงข้อมูลทั้งหมด
+    }
+    const term = searchTerm.toLowerCase();
+    return data.filter(item =>
+      item.seqNo.toLowerCase().includes(term) ||
+      item.name.toLowerCase().includes(term) ||
+      item.topic.toLowerCase().includes(term) ||
+      item.type.toLowerCase().includes(term)
+    );
+  }, [data, searchTerm]);
+
   const openDetail = (detailObj) => setSelectedDetail(detailObj);
   const closeDetail = () => setSelectedDetail(null);
 
@@ -117,6 +132,11 @@ const Dashboard = () => {
 
   if (loading) return <div className="loading">กำลังโหลด...</div>;
   if (error) return <div className="error">{error}</div>;
+
+  // คำนวณ colSpan สำหรับ "ไม่พบข้อมูล"
+  let colSpan = 6;
+  if (role !== "user") colSpan += 1; // รายละเอียด
+  if (role === "technical") colSpan += 1; // จัดการ
 
   return (
     <div className="dashboard">
@@ -138,7 +158,15 @@ const Dashboard = () => {
       <div className="table-container">
         <div className="table-header">
           <h3>รายการแจ้งซ่อมทั้งหมด</h3>
-          <div className="search-box"><input type="text" placeholder="ค้นหา..." /></div>
+          {/* <--- 2. เชื่อม State เข้ากับ Input */}
+          <div className="search-box">
+            <input 
+              type="text" 
+              placeholder="ค้นหา (เลขที่, ชื่อ, หัวข้อ...)" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         <table>
@@ -149,48 +177,56 @@ const Dashboard = () => {
               <th>ชื่อผู้แจ้ง</th>
               <th>หัวข้อ</th>
               <th>ประเภท</th>
-              {/* ช่างเห็น "ระดับความสำคัญ" แทน "สถานะ" */}
               {role === "technical" ? <th>ระดับความสำคัญ</th> : <th>สถานะ</th>}
               {role !== "user" && <th>รายละเอียด</th>}
               {role === "technical" && <th>จัดการ</th>}
             </tr>
           </thead>
           <tbody>
-            {data.map(item => (
-              <tr key={item.id}>
-                <td className="seq-no">{item.seqNo}</td>
-                <td>{item.date}</td>
-                <td>{item.name}</td>
-                <td>{item.topic}</td>
-                <td>{item.type}</td>
-                <td>
-                  {role === "technical" ? (
-                    <span className={`level-badge ${getLevelClass(item.level)}`}>
-                      {item.level}
-                    </span>
-                  ) : (
-                    <span className={`status-badge ${getStatusClass(item.status)}`}>
-                      {item.status}
-                    </span>
-                  )}
-                </td>
-                {role !== "user" && (
+            {/* ใช้ filteredData แทน data และเพิ่มเงื่อนไขแสดง "ไม่พบข้อมูล" */}
+            {filteredData.length > 0 ? (
+              filteredData.map(item => (
+                <tr key={item.id}>
+                  <td className="seq-no">{item.seqNo}</td>
+                  <td>{item.date}</td>
+                  <td>{item.name}</td>
+                  <td>{item.topic}</td>
+                  <td>{item.type}</td>
                   <td>
-                    <button className="btn-detail" onClick={() => openDetail(item.detailObj)}>
-                      ดู
-                    </button>
+                    {role === "technical" ? (
+                      <span className={`level-badge ${getLevelClass(item.level)}`}>
+                        {item.level}
+                      </span>
+                    ) : (
+                      <span className={`status-badge ${getStatusClass(item.status)}`}>
+                        {item.status}
+                      </span>
+                    )}
                   </td>
-                )}
-                {role === "technical" && (
-                  <td className="action-cell">{renderActionButton(item)}</td>
-                )}
+                  {role !== "user" && (
+                    <td>
+                      <button className="btn-detail" onClick={() => openDetail(item.detailObj)}>
+                        ดู
+                      </button>
+                    </td>
+                  )}
+                  {role === "technical" && (
+                    <td className="action-cell">{renderActionButton(item)}</td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={colSpan} style={{ textAlign: "center" }}>
+                  ไม่พบข้อมูล
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Modal – เพิ่มระดับความสำคัญ */}
+      {/* Modal */}
       {selectedDetail && (
         <div className="modal-overlay" onClick={closeDetail}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -231,7 +267,7 @@ const Dashboard = () => {
   );
 };
 
-// ฟังก์ชันช่วยเลือก class ตามสถานะ
+// ... (ฟังก์ชัน getStatusClass และ getLevelClass เหมือนเดิม)
 const getStatusClass = (status) => {
   if (status === "รอดำเนินการ") return "pending";
   if (status === "ระหว่างดำเนินการ") return "in-progress";
@@ -239,7 +275,6 @@ const getStatusClass = (status) => {
   return "";
 };
 
-// ฟังก์ชันช่วยเลือก class ตามระดับ
 const getLevelClass = (level) => {
   if (level === "สูง") return "high";
   if (level === "ปานกลาง") return "medium";
