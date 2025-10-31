@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Sidebar() {
-  const userRole = "technical"; // Replace with actual role check logic, e.g., from auth context
+  const { role } = useAuth();
 
   return (
     <nav className="app-sidebar">
@@ -11,22 +12,37 @@ function Sidebar() {
             <span>📊</span> ภาพรวม
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/form" className={({ isActive }) => isActive ? "active" : ""}>
-            <span>📝</span> แจ้งซ่อม
-          </NavLink>
-        </li>
-        <li>
-          {userRole === "technical" ? (
-            <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
-              <span>📋</span> Report
-            </NavLink>
-          ) : (
+
+        {role === "user" && (
+          <li>
             <NavLink to="/status" className={({ isActive }) => isActive ? "active" : ""}>
               <span>⏳</span> ติดตามสถานะ
             </NavLink>
-          )}
-        </li>
+          </li>
+        )}
+
+        {role === "technical" && (
+          <li>
+            <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
+              
+            </NavLink>
+          </li>
+        )}
+
+        {role === "admin" && (
+          <>
+            <li>
+              <NavLink to="/equipment" className={({ isActive }) => isActive ? "active" : ""}>
+                 <span>📈</span> Report
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
+               <span>🛠️</span> อุปกรณ์
+              </NavLink>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );
