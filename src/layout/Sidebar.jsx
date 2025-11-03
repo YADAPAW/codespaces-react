@@ -23,10 +23,7 @@ function Sidebar() {
 
         {role === "technical" && (
           <li>
-            <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
-              {/* คุณอาจจะลืมใส่ข้อความตรงนี้ครับ เช่น: */}
-              <span>📈</span> Report
-            </NavLink>
+            
           </li>
         )}
 
