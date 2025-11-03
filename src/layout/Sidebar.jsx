@@ -24,7 +24,8 @@ function Sidebar() {
         {role === "technical" && (
           <li>
             <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
-              
+              {/* คุณอาจจะลืมใส่ข้อความตรงนี้ครับ เช่น: */}
+              <span>📈</span> Report
             </NavLink>
           </li>
         )}
@@ -32,13 +33,15 @@ function Sidebar() {
         {role === "admin" && (
           <>
             <li>
-              <NavLink to="/equipment" className={({ isActive }) => isActive ? "active" : ""}>
-                 <span>📈</span> Report
+              {/* แก้ไขแล้ว: ลิงก์ "Report" ไปที่ /report */}
+              <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
+                  <span>📈</span> Report
               </NavLink>
             </li>
             <li>
-              <NavLink to="/report" className={({ isActive }) => isActive ? "active" : ""}>
-               <span>🛠️</span> อุปกรณ์
+              {/* แก้ไขแล้ว: ลิงก์ "อุปกรณ์" ไปที่ /equipment */}
+              <NavLink to="/equipment" className={({ isActive }) => isActive ? "active" : ""}>
+                <span>🛠️</span> อุปกรณ์
               </NavLink>
             </li>
           </>
