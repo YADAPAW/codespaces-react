@@ -22,10 +22,11 @@
   },
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=0 vite --port 3000",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest",
-    "install": "npm install"
+    "test": "vitest"
+    
   },
   "eslintConfig": {
     "extends": [
