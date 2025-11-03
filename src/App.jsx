@@ -3,7 +3,7 @@ import { Routes, Route, Outlet } from "react-router-dom";
 
 // 2. Import หน้าต่าง ๆ
 import Dashboard from "./dashboard/Dashboard";
-import Form from "./form/Form";
+import Form from "./dashboard/Form.jsx";
 import Status from "./status/Status.jsx";
 import Login from "./login/Login.jsx";
 import Report from "./report/Report.jsx";
