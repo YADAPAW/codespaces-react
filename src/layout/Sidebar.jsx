@@ -21,11 +21,7 @@ function Sidebar() {
           </li>
         )}
 
-        {role === "technical" && (
-          <li>
-            
-          </li>
-        )}
+        
 
         {role === "admin" && (
           <>
