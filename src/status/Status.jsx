@@ -2,17 +2,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Status.css";
 import { supabase } from "../lib/supabaseClient";
-import html2pdf from "html2pdf.js"; // เพิ่ม import
+import html2pdf from "html2pdf.js";
 
 const TABLE_NAME = "repairs";
 
 const Status = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
-  const printRef = useRef(); // ใช้สำหรับซ่อน element ขณะพิมพ์
+  const [searchName, setSearchName] = useState(""); // ช่องค้นหา
+  const printRef = useRef();
 
+  // ดึงข้อมูลครั้งเดียวตอนโหลด
   useEffect(() => {
     fetchRepairs();
   }, []);
@@ -45,6 +48,7 @@ const Status = () => {
       }));
 
       setData(formatted);
+      setFilteredData([]); // ตอนแรกซ่อนผล
     } catch (err) {
       console.error(err);
       setError("โหลดข้อมูลล้มเหลว: " + err.message);
@@ -53,10 +57,23 @@ const Status = () => {
     }
   };
 
+  // กรองข้อมูลเมื่อพิมพ์ชื่อ
+  useEffect(() => {
+    if (!searchName.trim()) {
+      setFilteredData([]);
+      return;
+    }
+
+    const filtered = data.filter(item =>
+      item.name.toLowerCase().includes(searchName.toLowerCase())
+    );
+    setFilteredData(filtered);
+  }, [searchName, data]);
+
   const openDetail = (detailObj) => setSelectedDetail(detailObj);
   const closeDetail = () => setSelectedDetail(null);
 
-  // ฟังก์ชันพิมพ์เป็น PDF
+  // ฟังก์ชันพิมพ์ PDF
   const printToPDF = (item) => {
     const element = document.createElement("div");
     element.innerHTML = `
@@ -83,8 +100,14 @@ const Status = () => {
             <tr>
               <td style="padding: 8px 0; font-weight: bold; color: #2c3e50;">สถานะ:</td>
               <td style="padding: 8px 0;">
-                <span style="background: ${item.status === "ระหว่างดำเนินการ" ? "#fff8e1" : "#d4edda"}; 
-                             color: ${item.status === "ระหว่างดำเนินการ" ? "#e67e22" : "#2d6a4f"}; 
+                <span style="background: ${
+                  item.status === "ระหว่างดำเนินการ" ? "#fff8e1" : 
+                  item.status === "เสร็จสิ้น" ? "#d4edda" : "#f8d7da"
+                }; 
+                             color: ${
+                  item.status === "ระหว่างดำเนินการ" ? "#e67e22" : 
+                  item.status === "เสร็จสิ้น" ? "#2d6a4f" : "#721c24"
+                }; 
                              padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
                   ${item.status}
                 </span>
@@ -129,7 +152,6 @@ const Status = () => {
     html2pdf().set(opt).from(element).save();
   };
 
-  // ฟังก์ชันช่วยกำหนดสีระดับความสำคัญ
   const getLevelColor = (level) => {
     switch (level) {
       case "สูง": return "#e74c3c";
@@ -139,9 +161,11 @@ const Status = () => {
     }
   };
 
-  const pendingItems = data.filter(item => item.status === "ระหว่างดำเนินการ");
-  const completedItems = data.filter(item => item.status === "เสร็จสิ้น");
-  const totalItems = data.length;
+  // แยกตามสถานะ
+  const pendingItems = filteredData.filter(item => item.status === "รอดำเนินการ");
+  const inProgressItems = filteredData.filter(item => item.status === "ระหว่างดำเนินการ");
+  const completedItems = filteredData.filter(item => item.status === "เสร็จสิ้น");
+  const totalItems = filteredData.length;
 
   if (loading) return <div className="loading">กำลังโหลด...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -150,91 +174,115 @@ const Status = () => {
     <div className="status-container" ref={printRef}>
       <h2>ติดตามสถานะการแจ้งซ่อมของฉัน</h2>
 
-      {/* การ์ดสรุป */}
-      <div className="summary-cards">
-        <div className="summary-card card-inprogress">
-          <div className="card-info">
-            <span className="card-title">ระหว่างดำเนินการ</span>
-            <span className="card-count">{pendingItems.length} <span className="card-unit">รายการ</span></span>
-          </div>
-        </div>
-        <div className="summary-card card-completed">
-          <div className="card-info">
-            <span className="card-title">รายการที่เสร็จสิ้น</span>
-            <span className="card-count">{completedItems.length} <span className="card-unit">รายการ</span></span>
-          </div>
-        </div>
-        <div className="summary-card card-total">
-          <div className="card-info">
-            <span className="card-title">รายการทั้งหมด</span>
-            <span className="card-count">{totalItems} <span className="card-unit">รายการ</span></span>
-          </div>
-        </div>
+      {/* ช่องค้นหาชื่อ */}
+      <div className="search-section">
+        <label htmlFor="search-name" className="search-label">ค้นหาด้วยชื่อผู้แจ้ง</label>
+        <input
+          id="search-name"
+          type="text"
+          placeholder="พิมพ์ชื่อผู้แจ้งเพื่อแสดงผล..."
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          className="search-input"
+          autoFocus
+        />
+        {searchName && (
+          <button className="btn-clear-search" onClick={() => setSearchName("")}>
+            ล้าง
+          </button>
+        )}
       </div>
 
-      {/* ตารางข้อมูล */}
-      <div className="table-section">
-        <div className="table-header-bar">
-          <h3>รายการงานซ่อมที่ค้างอยู่</h3>
+      {/* ถ้ายังไม่พิมพ์ชื่อ */}
+      {!searchName.trim() && (
+        <div className="empty-state">
+          <p>กรุณาพิมพ์ชื่อผู้แจ้งเพื่อดูสถานะการซ่อม</p>
         </div>
-        <div className="table-wrapper">
-          <table className="repair-table">
-            <thead>
-              <tr>
-                <th>เลขที่แจ้งซ่อม</th>
-                <th>วันที่แจ้งซ่อม</th>
-                <th>ชื่อผู้แจ้ง</th>
-                <th>รายละเอียดการแจ้งซ่อม</th>
-                <th>สถานะ</th>
-                <th>จัดการใบแจ้งซ่อม</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="seq-no">{item.seqNo}</td>
-                  <td>{item.date}</td>
-                  <td>{item.name}</td>
-                  <td>{item.detail}</td>
-                  <td>
-                    <span className={`status-badge ${item.status === "ระหว่างดำเนินการ" ? "in-progress" : "completed"}`}>
-                      {item.status}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      className="btn-action btn-details"
-                      onClick={() => openDetail(item.detailObj)}
-                    >
-                      รายละเอียด
-                    </button>
-                    <button
-                      className="btn-action btn-print"
-                      onClick={() => printToPDF(item)}
-                    >
-                      พิมพ์
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {pendingItems.length === 0 && (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center", padding: "30px", color: "#888" }}>
-                    ไม่มีรายการที่ค้างอยู่
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="pagination">
-          <button className="btn-page" disabled>Prev</button>
-          <button className="btn-page active">1</button>
-          <button className="btn-page">Next</button>
-        </div>
-      </div>
+      )}
 
-      {/* Modal แสดงรายละเอียด */}
+      {/* ถ้าพิมพ์แล้วแต่ไม่เจอ */}
+      {searchName.trim() && filteredData.length === 0 && (
+        <div className="empty-state">
+          <p>ไม่พบข้อมูลสำหรับชื่อ "<strong>{searchName}</strong>"</p>
+        </div>
+      )}
+
+      {/* แสดงผลเมื่อมีข้อมูล */}
+      {searchName.trim() && filteredData.length > 0 && (
+        <>
+          {/* การ์ดสรุป */}
+          <div className="summary-cards">
+            <div className="summary-card card-pending">
+              <div className="card-info">
+                <span className="card-title">รอดำเนินการ</span>
+                <span className="card-count">{pendingItems.length} <span className="card-unit">รายการ</span></span>
+              </div>
+            </div>
+            <div className="summary-card card-inprogress">
+              <div className="card-info">
+                <span className="card-title">ระหว่างดำเนินการ</span>
+                <span className="card-count">{inProgressItems.length} <span className="card-unit">รายการ</span></span>
+              </div>
+            </div>
+            <div className="summary-card card-completed">
+              <div className="card-info">
+                <span className="card-title">เสร็จสิ้น</span>
+                <span className="card-count">{completedItems.length} <span className="card-unit">รายการ</span></span>
+              </div>
+            </div>
+            <div className="summary-card card-total">
+              <div className="card-info">
+                <span className="card-title">ทั้งหมด</span>
+                <span className="card-count">{totalItems} <span className="card-unit">รายการ</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* ตารางทั้งหมด */}
+          <div className="table-section">
+            <div className="table-header-bar">
+              <h3>รายการแจ้งซ่อมทั้งหมดของ {searchName}</h3>
+            </div>
+            <div className="table-wrapper">
+              <table className="repair-table">
+                <thead>
+                  <tr>
+                    <th>เลขที่</th>
+                    <th>วันที่</th>
+                    <th>หัวข้อ</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.map((item) => (
+                    <tr key={item.id}>
+                      <td className="seq-no">{item.seqNo}</td>
+                      <td>{item.date}</td>
+                      <td>{item.detail}</td>
+                      <td>
+                        <span className={`status-badge status-${item.status.replace(/ /g, '-').toLowerCase()}`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button className="btn-action btn-details" onClick={() => openDetail(item.detailObj)}>
+                          รายละเอียด
+                        </button>
+                        <button className="btn-action btn-print" onClick={() => printToPDF(item)}>
+                          พิมพ์
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Modal */}
       {selectedDetail && (
         <div className="modal-overlay" onClick={closeDetail}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
